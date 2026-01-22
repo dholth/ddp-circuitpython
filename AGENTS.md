@@ -1,0 +1,3 @@
+- Target Python 3.10+ and circuitpython
+- Use primitive types in annotations instead of Optional.
+- Put typing code in type declaration block `if typing.TYPE_CHECKING:`
