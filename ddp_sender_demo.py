@@ -11,7 +11,7 @@ from ddp_receiver import (
     DDP_FLAGS1_VER1,
     DDP_ID_DISPLAY,
     DDP_PORT,
-    ddp_build_header,
+    build_header,
 )
 
 PIXEL_COUNT = 30
@@ -33,7 +33,7 @@ def main() -> None:
     try:
         while True:
             payload = _random_frame()
-            header = ddp_build_header(
+            header = build_header(
                 DDP_FLAGS1_VER1 | DDP_FLAGS1_PUSH,
                 DDP_ID_DISPLAY,
                 0,

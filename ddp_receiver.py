@@ -35,7 +35,7 @@ DDP_ID_CONFIG = 250
 DDP_ID_ALL = 255
 
 
-def ddp_build_header(flags1: int, device_id: int, offset: int, length: int) -> bytes:
+def build_header(flags1: int, device_id: int, offset: int, length: int) -> bytes:
     header = bytearray(DDP_HEADER_LEN)
     header[0] = flags1 & 0xFF
     header[1] = 0
@@ -189,10 +189,10 @@ class DDPReceiver:
             self._send_empty_reply(device_id, addr)
             return
         flags1 = DDP_FLAGS1_VER1 | DDP_FLAGS1_REPLY | DDP_FLAGS1_PUSH
-        header = ddp_build_header(flags1, device_id, 0, len(self._status_json))
+        header = build_header(flags1, device_id, 0, len(self._status_json))
         self._sock.sendto(header + self._status_json, addr)
 
     def _send_empty_reply(self, device_id: int, addr) -> None:
         flags1 = DDP_FLAGS1_VER1 | DDP_FLAGS1_REPLY | DDP_FLAGS1_PUSH
-        header = ddp_build_header(flags1, device_id, 0, 0)
+        header = build_header(flags1, device_id, 0, 0)
         self._sock.sendto(header, addr)
