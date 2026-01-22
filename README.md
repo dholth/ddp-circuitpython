@@ -1,7 +1,7 @@
 DDP CircuitPython
 =================
 
-A client for the [DDP Display Data Protocol](http://www.3waylabs.com/ddp/) for
+A client for the [DDP Distributed Display Protocol](http://www.3waylabs.com/ddp/) for
 CircuitPython, and testing utilities.
 
 The Distributed Display Protocol is a way to send data to lighting displays.
