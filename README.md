@@ -5,10 +5,10 @@ A client for the [DDP Display Data Protocol](http://www.3waylabs.com/ddp/) for
 CircuitPython, and testing utilities.
 
 The Distributed Display Protocol is a way to send data to lighting displays.
-This library was written to send colors from a device running the [WLED
-software](https://kno.wled.ge/) to a device that can only run CircuitPython. The
-receiving device behaves like an additional LED strip attached to the sending
-device.
+This library was written to send colors from a device running the latest version
+of the [WLED software](https://kno.wled.ge/) to a device that can only run
+CircuitPython. The receiving device behaves like an additional LED strip
+attached to the sending device.
 
 ## Installation
 
