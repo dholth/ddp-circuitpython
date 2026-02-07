@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import typing
 
+import struct
+
 if typing.TYPE_CHECKING:
     import socket
     from collections.abc import Callable
@@ -35,7 +37,8 @@ DDP_ID_CONFIG = 250
 DDP_ID_ALL = 255
 
 
-def build_header(flags1: int, device_id: int, offset: int, length: int) -> bytes:
+def build_header_2(flags1: int, device_id: int, offset: int, length: int) -> bytes:
+    # initial version
     header = bytearray(DDP_HEADER_LEN)
     header[0] = flags1 & 0xFF
     header[1] = 0
@@ -50,7 +53,17 @@ def build_header(flags1: int, device_id: int, offset: int, length: int) -> bytes
     return bytes(header)
 
 
-def _parse_header(
+HEADER_FORMAT = ">BxxBIH"
+
+
+def build_header(flags1: int, device_id: int, offset: int, length: int) -> bytes:
+    """
+    Create DDP header.
+    """
+    return struct.pack(HEADER_FORMAT, flags1 & 0xFF, device_id & 0xFF, offset, length)
+
+
+def _parse_header_2(
     packet: bytes,
 ) -> tuple[int, int, int, int, int, int | None] | None:
     if len(packet) < DDP_HEADER_LEN:
@@ -62,6 +75,25 @@ def _parse_header(
     device_id = packet[3]
     offset = (packet[4] << 24) | (packet[5] << 16) | (packet[6] << 8) | packet[7]
     length = (packet[8] << 8) | packet[9]
+    timecode = None
+    if flags1 & DDP_FLAGS1_TIME:
+        if len(packet) < DDP_HEADER_LEN_TIME:
+            return None
+        timecode = int.from_bytes(packet[10:14], "big")
+    header_len = DDP_HEADER_LEN_TIME if (flags1 & DDP_FLAGS1_TIME) else DDP_HEADER_LEN
+    return flags1, device_id, offset, length, header_len, timecode
+
+
+def _parse_header(packet: bytes) -> tuple[int, int, int, int, int | None] | None:
+    """
+    Parse DDP header
+    """
+    if len(packet) < DDP_HEADER_LEN:
+        return None
+    flags1, device_id, offset, length = struct.unpack_from(HEADER_FORMAT, packet)
+    version = (flags1 & DDP_FLAGS1_VER) >> 6
+    if version != 1:
+        return None
     timecode = None
     if flags1 & DDP_FLAGS1_TIME:
         if len(packet) < DDP_HEADER_LEN_TIME:
